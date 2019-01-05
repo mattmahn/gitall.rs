@@ -8,13 +8,13 @@ build() {
 }
 
 mk_tarball() {
-  local tmpdir="$(mktemp -d -p .)"
+  local tmpdir="$(mktemp -d)"
   echo "tmpdir = $tmpdir"
-  local name="gitall-${TRAVIS_TAG}"
+  local name="gitall-${TRAVIS_TAG}-${TARGET}"
   local staging="$tmpdir/$name"
-  mkdir -p "$staging"/complete
+  mkdir -p "$staging/complete"
 
-  local out_dir="$(pwd)/deployment"
+  local out_dir="${TRAVIS_BUILD_DIR:-$PWD}/deployment"
   mkdir -p "$out_dir"
 
   local cargo_out="$(cargo_out_dir "target/$TARGET")"
