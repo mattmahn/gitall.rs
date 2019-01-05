@@ -9,6 +9,9 @@ gitall finds all repositories below a directory and runs the given [Git][] comma
 
 The simplest form is to `cd` to a directory containing all the repos you want to operate on, then write your Git command changing `git` to `gitall`.
 
+**Pro Tip:** if you add a file called `git-foo` to your `$PATH` (either via copying or symlink), you can call that program _through_ `git` using `git foo`; no additional aliases or setup needed.
+So, after running `ln -s /usr/bin/gitall /usr/bin/git-all`, you can use gitall via `git all` exactly the same as if you used `gitall`.
+
 
 ### Examples
 
