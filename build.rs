@@ -1,15 +1,26 @@
 use clap::Shell;
 
-use std::env;
+use std::{env, fs, path};
 
-include!("src/cli.rs");
+#[path = "src/cli.rs"]
+mod cli;
 
 fn main() {
     let outdir = match env::var_os("OUT_DIR") {
-        None => return,
         Some(outdir) => outdir,
+        None => {
+            panic!("OUT_DIR environment variable not defined");
+        },
     };
-    let mut app = build_cli();
+    fs::create_dir_all(&outdir).unwrap();
+
+    let stamp_path = path::Path::new(&outdir).join("gitall-stamp");
+    if let Err(err) = fs::File::create(&stamp_path) {
+        panic!("failed to write {}: {}", stamp_path.display(), err);
+    }
+
+    // use clap to build completion files
+    let mut app = cli::build_cli();
     let variants = &[
         Shell::Bash,
         Shell::Fish,

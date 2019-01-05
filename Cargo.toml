@@ -12,6 +12,9 @@ categories = ["command-line-utilities"]
 publish = false
 build = "build.rs"
 
+[badges]
+travis-ci = { repository = "mattmahn/gitall.rs", branch = "master" }
+
 [build-dependencies]
 clap = "~2.32.0"
 

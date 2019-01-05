@@ -2,6 +2,8 @@
 
 gitall finds all repositories below a directory and runs the given [Git][] command in each repository in parallel.
 
+[![Linux/macOS Build Status](https://travis-ci.org/mattmahn/gitall.rs.svg?branch=master)](https://travis-ci.org/mattmahn/gitall.rs)
+
 
 ## Usage
 
