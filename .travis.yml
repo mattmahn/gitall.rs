@@ -14,6 +14,9 @@ matrix:
     - os: linux
       rust: nightly
       env: TARGET=x86_64-unknown-linux-gnu
+    - os: linux
+      rust: nightly
+      env: TARGET=x86_64-unknown-linux-musl
     - os: osx
       rust: nightly
       env: TARGET=x86_64-apple-darwin
@@ -22,6 +25,9 @@ matrix:
     - os: linux
       rust: beta
       env: TARGET=x86_64-unknown-linux-gnu
+    - os: linux
+      rust: beta
+      env: TARGET=x86_64-unknown-linux-musl
     - os: osx
       rust: beta
       env: TARGET=x86_64-apple-darwin
@@ -30,6 +36,9 @@ matrix:
     - os: linux
       rust: stable
       env: TARGET=x86_64-unknown-linux-gnu
+    - os: linux
+      rust: stable
+      env: TARGET=x86_64-unknown-linux-musl
     - os: osx
       rust: stable
       env: TARGET=x86_64-apple-darwin
