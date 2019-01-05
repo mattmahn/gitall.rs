@@ -1,0 +1,38 @@
+---
+language: rust
+
+env:
+  global:
+    - RUST_BACKTRACE: full
+
+matrix:
+  allow_failures:
+    - rust: nightly
+  fast_finish: true
+  include:
+    # Nightly channel
+    - os: linux
+      rust: nightly
+    - os: osx
+      rust: nightly
+
+    # Beta channel
+    - os: linux
+      rust: beta
+    - os: osx
+      rust: beta
+
+    # Stable channel
+    - os: linux
+      rust: stable
+    - os: osx
+      rust: stable
+
+cache: cargo
+
+# deploy:
+#   provider: releases
+#   skip_cleanup: true
+#   on:
+#     condition: $TRAVIS_RUST_VERSION = nightly
+#     tags: true
