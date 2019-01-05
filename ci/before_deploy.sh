@@ -3,6 +3,15 @@ set -ex
 
 . "$(dirname $0)/utils.sh"
 
+case "$TRAVIS_OS_NAME" in
+  windows)
+    bin_name="gitall.exe"
+    ;;
+  *)
+    bin_name="gitall"
+    ;;
+esac
+
 build() {
   cargo build --target "$TARGET" --release
 }
@@ -19,14 +28,20 @@ mk_tarball() {
 
   local cargo_out="$(cargo_out_dir "target/$TARGET")"
 
-  cp "target/$TARGET/release/gitall" "$staging/gitall"
-  strip "$staging/gitall"
-  cp {CHANGELOG.md,COPYING,LICENSE-MIT,README.md,UNLICENSE} "$staging/"
+  cp "target/$TARGET/release/${bin_name}" "$staging/"
+  if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then
+    strip "$staging/${bin_name}"
+  fi
+  cp CHANGELOG.md COPYING LICENSE-MIT README.md UNLICENSE "$staging/"
 
   # copy shell completion files
   cp "$cargo_out"/gitall.{bash,elv,fish} "$cargo_out"/_gitall{,.ps1} "$staging/complete/"
 
-  ( cd "$tmpdir" && tar czf "$out_dir/$name.tar.gz" "$name" )
+  if [[ "$TRAVIS_OS_NAME" = "windows" ]]; then
+    7z a -r "$out_dir/$name.zip" "$staging"
+  else
+    tar czf "$out_dir/$name.tar.gz" "$staging"
+  fi
   rm -rf "$tmpdir"
 }
 

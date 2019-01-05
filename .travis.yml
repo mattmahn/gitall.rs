@@ -20,6 +20,9 @@ matrix:
     - os: osx
       rust: nightly
       env: TARGET=x86_64-apple-darwin
+    - os: windows
+      rust: nightly
+      env: TARGET=x86_64-pc-windows-msvc
 
       # Beta channel
     - os: linux
@@ -31,6 +34,9 @@ matrix:
     - os: osx
       rust: beta
       env: TARGET=x86_64-apple-darwin
+    - os: windows
+      rust: beta
+      env: TARGET=x86_64-pc-windows-msvc
 
       # Stable channel
     - os: linux
@@ -42,6 +48,9 @@ matrix:
     - os: osx
       rust: stable
       env: TARGET=x86_64-apple-darwin
+    - os: windows
+      rust: stable
+      env: TARGET=x86_64-pc-windows-msvc
 
 cache: cargo
 
@@ -53,8 +62,14 @@ deploy:
   api_key:
     secure: ZdiHkAYQRT59B61aSBfqyBWzrxzNqBLvWwgbjZRVc5yHLkcUG9HKrgRjfirLI833lqrGm0yx6iQ/KrA1z+nnWY7Jl3PS/JdAHlBbtNx5Yuk/44PzuGT88R/40ZprGxRPC1Q/kj4/YttaYPm+NfWr39HdlHDDvV8oINPYzClXHTL0RFW1HHWy8RUrNF/sn2JucAru1xVBP8L5QV9XCZwg9MDlcDyFrGnpm1blR2arRx0pOEdPgKvXpQobUEmTDUMRby8Vr5wCIp+tyY9ubuhc+ZPsVv6oy9jRLoEUK5AnMO1WHAMrg7BUyo5Y2U9223Zwrt6k6BM3EYOITwjs/DMU7uW9v4PtkXseJWzHWtU1Cg4AC9RV3L/6jpRd93AHo9BASULODKeqeUW3kFzqSj1HTRP2Oxh9kB7K1wrPsNaO7fGXTb0mzifQKSvS6PW+ujEGCBVKIBgtt67cBHvNslEw4Vru2iaKylh+RW2i2MZjnOt1ySlcjBsrxQGTsHGZdMk8vIOGQh5sLgBWHN11FsjJHCQEz1Lzudhgi1bqRFmgybvGV4/sUQ6RbNL+aiUyITYB2XIahkj3CXdWYIop0Dm9besNcyKYOeY3rhqQErJsunkd1Ipv2yvWANFNd1q0TSAo5jgfDQ1nSc2uvO+MEDxLBe/Tx7WqBpOI04wm/iW1J4U=
   skip_cleanup: true
-  file: ${TRAVIS_BUILD_DIR}/deployment/gitall-${TRAVIS_TAG}-${TARGET}.tar.gz
+  file_glob: true
+  file:
+    - deployment/gitall-${TRAVIS_TAG}-${TARGET}.*
   on:
     condition: $TRAVIS_RUST_VERSION = stable
     repo: mattmahn/gitall.rs
     tags: true
+
+notifications:
+  email:
+    on_success: never
