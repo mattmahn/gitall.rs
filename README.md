@@ -17,7 +17,7 @@ Fetch the latest changes for all your repositories under `~/code`:
 $ cd ~/code
 $ gitall fetch origin
 ```
-Alternatively, you could also run `gitall -D ~/code fetch origin` from any directory.
+Alternatively, you can run `gitall -D ~/code fetch origin` from any directory.
 
 
 ### Options
@@ -48,6 +48,13 @@ Dependencies:
   - Git
   - Rust & Cargo (for build only)
 
+You can download pre-built binaries for some platforms on the [releases][] page.
+After extracting the release artifacts, move the `gitall` executable to some directory in your `$PATH`.
+Refer to your shell's documentation for installing  the completion scripts located in `complete/`.
+
+
+### From source
+
 Clone this repository, build gitall, then copy the executable to a directory in your `$PATH`:
 ```console
 $ git clone https://github.com/mattmahn/gitall.rs && cd gitall.rs
@@ -60,3 +67,4 @@ Refer to your shell's documentation for installation.
 
 
 [Git]: https://git-scm.com/
+[releases]: https://github.com/mattmahn/gitall.rs/releases
