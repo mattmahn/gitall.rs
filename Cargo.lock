@@ -88,6 +88,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "gitall"
 version = "0.1.1"
 dependencies = [
+ "atty 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "num_cpus 1.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rayon 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)",

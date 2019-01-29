@@ -1,18 +1,26 @@
+use atty;
 use clap::ArgMatches;
 use rayon;
+use termcolor::{StandardStream};
 use walkdir::{DirEntry, WalkDir};
 
 use std::ffi::OsStr;
 use std::process::{Command, Output};
 use std::path::PathBuf;
 use std::sync::Arc;
-use std::io::{self, Write};
 use std::sync::mpsc::channel;
+use std::iter::{IntoIterator, Iterator};
 
 mod cli;
+mod output;
+
+/// List of Git commands that suport the `--color` option.  Only commands shown
+/// here will have `--color` set in the spawned process.
+const COMMANDS: &[&'static str] = &["blame", "branch", "diff", "diff-index",
+    "format-patch", "grep", "log", "reflog", "rev-list", "shortlog", "show"];
 
 #[derive(Debug)]
-struct GitResult {
+pub struct GitResult {
     directory_name: PathBuf,
     output: Output,
 }
@@ -22,6 +30,7 @@ fn main() {
 
     let git_command_args = matches.values_of("cmd").unwrap();
     let git_command: Arc<Vec<String>> = Arc::new(git_command_args.map(String::from).collect());
+    let git_color_arg: Arc<String> = Arc::new(format!("--color {}", cli::get_color_mode(&matches)));
 
     let pool = rayon::ThreadPoolBuilder::new().build().unwrap();
     let (tx, rx) = channel::<GitResult>();
@@ -40,13 +49,17 @@ fn main() {
     for entry in dir_iter {
         let tx = tx.clone();
         let args = git_command.clone();
+        let color_arg = git_color_arg.clone();
 
         pool.spawn(move || {
             let entry: DirEntry = entry.unwrap();
-            let output = Command::new("git")
-                .current_dir(entry.path())
-                .args(args.as_ref())
-                .output()
+            let mut command = Command::new("git");
+            command.current_dir(entry.path())
+                .args(args.as_ref());
+            if should_set_color_arg(args.as_ref()) {
+                command.arg(color_arg.as_ref());
+            }
+            let output = command.output()
                 .expect("failed to execute git command");
 
             tx.send(GitResult {
@@ -59,13 +72,16 @@ fn main() {
     // manually drop tx so the receiver ends
     drop(tx);
 
-    let stdout = io::stdout();
-    let mut stdout_l = stdout.lock();
-    let stderr = io::stderr();
-    let mut stderr_l = stderr.lock();
+    let color_mode = cli::get_color_mode(&matches);
+    let stdout = StandardStream::stdout(output::color_choice(&color_mode, &atty::Stream::Stdout));
+    let stderr = StandardStream::stderr(output::color_choice(&color_mode, &atty::Stream::Stderr));
+    {
+        let mut stdout_l = stdout.lock();
+        let mut stderr_l = stderr.lock();
 
-    for gr in rx {
-        print_git_result(&mut stdout_l, &mut stderr_l, gr);
+        for gr in rx {
+            output::print_git_result(&mut stdout_l, &mut stderr_l, gr).unwrap();
+        }
     }
 }
 
@@ -74,9 +90,6 @@ fn is_git_dir(entry: &DirEntry) -> bool {
         && entry.path().join(".git").is_dir()
 }
 
-fn print_git_result(stdout: &mut Write, stderr: &mut Write, gr: GitResult) {
-    writeln!(stdout, "{:#?}", gr.directory_name.into_os_string()).unwrap();
-    write!(stdout, "{}", String::from_utf8(gr.output.stdout).expect("git output is not valid UTF-8")).unwrap();
-    write!(stderr, "{}", String::from_utf8(gr.output.stderr).expect("git output is not valid UTF-8")).unwrap();
-    writeln!(stdout, "").unwrap();
+fn should_set_color_arg(cmd: &Vec<String>) -> bool {
+    cmd.iter().any(|term| COMMANDS.contains(&term.as_str()))
 }
