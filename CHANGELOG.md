@@ -6,12 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 ## [Unreleased]
+### Fixed
+- [#3]: Directories are properly recursed into until the "shallowest" Git repository is found.
+
 ### Added
 - Future releases will have pre-built binaries for `x86_64-pc-windows-msvc`
-- The printed output is colorful by default!
+- [#2]: The printed output is colorful by default!
   The path/repo headers for successful Git commands will be printed in green, while failed commands are printed in red.
   The new `--color` option controls the colorful behavior.
   The `--color` option is also passed to a whitelist of Git commands, in order to control their output as well.
+
+[#2]: https://github.com/mattmahn/gitall.rs/issues/2
+[#3]: https://github.com/mattmahn/gitall.rs/issues/3
 
 
 ## [0.1.1] - 2019-01-05

@@ -45,28 +45,41 @@ fn main() {
     }
 
     // walk directory tree
-    let dir_iter = wd.into_iter().filter_entry(is_git_dir);
-    for entry in dir_iter {
-        let tx = tx.clone();
-        let args = git_command.clone();
-        let color_arg = git_color_arg.clone();
-
-        pool.spawn(move || {
-            let entry: DirEntry = entry.unwrap();
-            let mut command = Command::new("git");
-            command.current_dir(entry.path())
-                .args(args.as_ref());
-            if should_set_color_arg(args.as_ref()) {
-                command.arg(color_arg.as_ref());
+    let mut it = wd.into_iter();
+    loop {
+        let entry = match it.next() {
+            None => break,
+            Some(Err(err)) => panic!("ERROR: {}", err),
+            Some(Ok(entry)) => entry,
+        };
+        if is_git_dir(&entry) {  // we've found a Git repo root
+            if entry.file_type().is_dir() {
+                // stop searching below this directory since we've already
+                // found a Git repo root
+                it.skip_current_dir();
             }
-            let output = command.output()
-                .expect("failed to execute git command");
 
-            tx.send(GitResult {
-                directory_name: entry.into_path(),
-                output
-            }).unwrap();
-        });
+            let tx = tx.clone();
+            let args = git_command.clone();
+            let color_arg = git_color_arg.clone();
+
+            pool.spawn(move || {
+                let mut command = Command::new("git");
+                command.current_dir(entry.path())
+                    .args(args.as_ref());
+                if should_set_color_arg(args.as_ref()) {
+                    command.arg(color_arg.as_ref());
+                }
+                let output = command.output()
+                    .expect("failed to execute git command");
+
+                tx.send(GitResult {
+                    directory_name: entry.into_path(),
+                    output
+                }).unwrap();
+            });
+        }
+        // here, `entry` _may not_ be a Git repo
     }
 
     // manually drop tx so the receiver ends
