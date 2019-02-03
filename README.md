@@ -17,16 +17,20 @@ So, after running `ln -s /usr/bin/gitall /usr/bin/git-all`, you can use gitall v
 
 ### Examples
 
+Print the latest commit SHA:
+
+![](./screenshot.png)
+
 Fetch the latest changes for all your repositories under `~/code`:
 ```console
 $ cd ~/code
 $ gitall fetch origin
-"/home/matt/code/gitall.rs"
+/home/matt/code/gitall.rs
 From github.com:mattmahn/gitall.rs
    17acab9..8994d3c  master     -> origin/master
  * [new branch]      windows-build -> origin/windows-build
 
-"/home/matt/code/jsonapi-server"
+/home/matt/code/jsonapi-server
 From github.com:holidayextras/jsonapi-server
  * [new branch]      greenkeeper/debug-4.1.1 -> origin/greenkeeper/debug-4.1.1
  * [new branch]      greenkeeper/eslint-plugin-node-8.0.0 -> origin/greenkeeper/eslint-plugin-node-8.0.0
@@ -65,6 +69,7 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
+        --color <WHEN>          Controls when to use color [default: auto]  [possible values: always, true, auto, never, false]
     -D, --directory <DIR>       The directory to start searching under [default: .]
     -d, --max-depth <LEVELS>    Descend at most LEVELS of directories below DIR
 

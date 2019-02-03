@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 ## [Unreleased]
+
+
+## [0.2.0] - 2019-02-03
 ### Fixed
 - [#3]: Directories are properly recursed into until the "shallowest" Git repository is found.
 
@@ -28,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Linux musl C
   - macOS
 
+
 ## [0.1.0] - 2019-01-05
 ### Added
 - Run Git commands in all repositories below the current directory
@@ -37,6 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `-D`/`--directory` option to set the search directory to something other than the current working directory
 
 
-[Unreleased]: https://github.com/mattmahn/gitall.rs/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/mattmahn/gitall.rs/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/mattmahn/gitall.rs/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/mattmahn/gitall.rs/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/mattmahn/gitall.rs/compare/d9647f8e72b5a50101217f090c7a8bc3716c5c98...v0.1.0
