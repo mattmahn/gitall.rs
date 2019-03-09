@@ -84,7 +84,12 @@ Dependencies:
   - Git
   - Rust & Cargo (for build only)
 
-You can download pre-built binaries for some platforms on the [releases][] page.
+You can install gitall from [crates.io][] with
+```console
+$ cargo install gitall
+```
+
+Or download pre-built binaries for some platforms on the [releases][] page.
 After extracting the release artifacts, move the `gitall` executable to some directory in your `PATH`.
 Refer to your shell's documentation for installing the completion scripts located in `complete/`.
 
@@ -102,5 +107,6 @@ Shell completions for Bash, Zsh, fish, Elvish, and PowerShell are also generated
 Refer to your shell's documentation for installation.
 
 
+[crates.io]: https://crates.io/
 [Git]: https://git-scm.com/
 [releases]: https://github.com/mattmahn/gitall.rs/releases

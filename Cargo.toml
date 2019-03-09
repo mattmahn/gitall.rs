@@ -9,7 +9,6 @@ repository = "https://github.com/mattmahn/gitall.rs"
 readme = "README.md"
 license = "Unlicense OR MIT"
 categories = ["command-line-utilities"]
-publish = false
 build = "build.rs"
 
 [badges]
