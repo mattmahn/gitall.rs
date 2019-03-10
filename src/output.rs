@@ -39,7 +39,7 @@ fn print_repo_header<W, D>(w: &mut W, repo: D, success: bool) -> io::Result<()>
     let mut style = ColorSpec::new();
     style.set_bold(true);
     style.set_underline(true);
-    if success { style.set_fg(Some(Color::Green)); } else { style.set_fg(Some(Color::Red)); }
+    style.set_fg(Some(if success { Color::Green } else { Color::Red }));
 
     w.set_color(&style)?;
     writeln!(w, "{}", repo)?;
