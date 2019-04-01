@@ -30,7 +30,7 @@ fn main() {
 
     let git_command_args = matches.values_of("cmd").unwrap();
     let git_command: Arc<Vec<String>> = Arc::new(git_command_args.map(String::from).collect());
-    let git_color_arg: Arc<String> = Arc::new(format!("--color {}", cli::get_color_mode(&matches)));
+    let git_color_arg: Arc<String> = Arc::new(format!("--color={}", cli::get_color_mode(&matches)));
 
     let pool = rayon::ThreadPoolBuilder::new().build().unwrap();
     let (tx, rx) = channel::<GitResult>();
