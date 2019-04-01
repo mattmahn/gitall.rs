@@ -16,7 +16,7 @@ mod output;
 
 /// List of Git commands that suport the `--color` option.  Only commands shown
 /// here will have `--color` set in the spawned process.
-const COMMANDS: &[&'static str] = &["blame", "branch", "diff", "diff-index",
+const COMMANDS: &[&'static str] = &["branch", "diff", "diff-index",
     "format-patch", "grep", "log", "reflog", "rev-list", "shortlog", "show"];
 
 #[derive(Debug)]
