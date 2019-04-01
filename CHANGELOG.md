@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 ## [Unreleased]
+### Fixed
+- [#4]: `--color` option is properly passed to Git
+- `blame` has been removed from the `--color` whitelist because it does not support the option
+
+[#4]: https://github.com/mattmahn/gitall.rs/issues/4
 
 
 ## [0.2.0] - 2019-02-03
