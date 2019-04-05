@@ -62,7 +62,7 @@ deploy:
     token:
       secure: "Ccp4VCSafFuSJdF+CyJk+xm+7LnFMpKIM031O/ZNajIai3q6XsbXQyDp9qtYQtvx8I+SgDACYSaa+6pw51V35OQ9o7AlLXwP7PlztJUZn6SUa68ZZ0XpysLp7usOUw3Wyf3bM2xjDhCFEL6x9NIk9w/H89l+ZEZqsxerrBaXJVpD8LtMco+TxDxZ9VCDEo/+xYWYA27SAGusVpxgVW4MHGhfVUmXSdj3eO6s2ig8jZtO3hBGT+9YLes3VnoOm6iCxRdfRE+CxaxsJmsoQB2NR42s67EavjrUgmjiSpxinDOhwQPXCyxeaC1aiOUZ7v+xtAUZlWd9Vr0k/TGPhfzJeO5ykM3ioYn8VlltSafYR3PTBHBdXV8db64PVDxYOEE9nBQajFwsxcm0FNiGbRWPu5n3+anz+K6zob+OrUgXd45zMMokg45CscMi/2bGO+dxVqk98H23O+ynFtzRxXtjRITj/BlBYJHqr4NcuNsaMm9Dbzv+SWQWxNHoN8KQ6jHnAzx9u28ilhx0apVPa0FOnedBQWDXE6cJQBLsyVi8n9g7AmjhFqzzC1p0lUJy8rZv69Izi6HHWPylLBjAlJl2MGnjY8Yu4Q4o8jR9B/UGuCQrvThGl15YO7Mdz+wtqx+esR0anlbn7O9wg+fwahKM/njk9awGAVOQEc3pogUk1CU="
     on:
-      condition: $TRAVIS_RUST_VERSION = stable
+      condition: '"$TRAVIS_RUST_VERSION" = stable -a "$TARGET" = x86_64-unknown-linux-gnu'
       repo: mattmahn/gitall.rs
       tags: true
 
