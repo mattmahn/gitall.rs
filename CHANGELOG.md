@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 
 ## [Unreleased]
+
+
+## [0.2.1] - 2019-04-05
 ### Fixed
 - [#4]: `--color` option is properly passed to Git
 - `blame` has been removed from the `--color` whitelist because it does not support the option
@@ -46,7 +49,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - `-D`/`--directory` option to set the search directory to something other than the current working directory
 
 
-[Unreleased]: https://github.com/mattmahn/gitall.rs/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/mattmahn/gitall.rs/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/mattmahn/gitall.rs/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/mattmahn/gitall.rs/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/mattmahn/gitall.rs/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/mattmahn/gitall.rs/compare/d9647f8e72b5a50101217f090c7a8bc3716c5c98...v0.1.0
