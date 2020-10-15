@@ -1,6 +1,7 @@
 use atty;
 use clap::ArgMatches;
 use rayon;
+use regex::Regex;
 use termcolor::{StandardStream};
 use walkdir::{DirEntry, WalkDir};
 
@@ -14,7 +15,7 @@ use std::iter::{IntoIterator, Iterator};
 mod cli;
 mod output;
 
-/// List of Git commands that suport the `--color` option.  Only commands shown
+/// List of Git commands that support the `--color` option.  Only commands shown
 /// here will have `--color` set in the spawned process.
 const COMMANDS: &[&'static str] = &["branch", "diff", "diff-index",
     "format-patch", "grep", "log", "reflog", "rev-list", "shortlog", "show"];
@@ -44,6 +45,9 @@ fn main() {
         wd = wd.max_depth(usize::from_str_radix(max_depth, 10).expect("max-depth option could not be parsed as a base-10 number"));
     }
 
+    let regex_str = matches.value_of("regex").unwrap();
+    let regex = Regex::new(regex_str).unwrap();
+
     // walk directory tree
     let mut it = wd.into_iter();
     loop {
@@ -52,32 +56,31 @@ fn main() {
             Some(Err(err)) => panic!("ERROR: {}", err),
             Some(Ok(entry)) => entry,
         };
-        if is_git_dir(&entry) {  // we've found a Git repo root
-            if entry.file_type().is_dir() {
-                // stop searching below this directory since we've already
-                // found a Git repo root
-                it.skip_current_dir();
+        if is_git_dir(&entry) { // we've found a Git repo root
+            // stop searching below this directory since we've already
+            // found a Git repo root
+            it.skip_current_dir();
+            if is_matching_dir(&entry, &regex) { // Only run commands for filtered repo(s)
+                let tx = tx.clone();
+                let args = git_command.clone();
+                let color_arg = git_color_arg.clone();
+
+                pool.spawn(move || {
+                    let mut command = Command::new("git");
+                    command.current_dir(entry.path())
+                        .args(args.as_ref());
+                    if should_set_color_arg(args.as_ref()) {
+                        command.arg(color_arg.as_ref());
+                    }
+                    let output = command.output()
+                        .expect("failed to execute git command");
+
+                    tx.send(GitResult {
+                        directory_name: entry.into_path(),
+                        output
+                    }).unwrap();
+                });
             }
-
-            let tx = tx.clone();
-            let args = git_command.clone();
-            let color_arg = git_color_arg.clone();
-
-            pool.spawn(move || {
-                let mut command = Command::new("git");
-                command.current_dir(entry.path())
-                    .args(args.as_ref());
-                if should_set_color_arg(args.as_ref()) {
-                    command.arg(color_arg.as_ref());
-                }
-                let output = command.output()
-                    .expect("failed to execute git command");
-
-                tx.send(GitResult {
-                    directory_name: entry.into_path(),
-                    output
-                }).unwrap();
-            });
         }
         // here, `entry` _may not_ be a Git repo
     }
@@ -101,6 +104,10 @@ fn main() {
 fn is_git_dir(entry: &DirEntry) -> bool {
     entry.file_type().is_dir()
         && entry.path().join(".git").is_dir()
+}
+
+fn is_matching_dir(entry: &DirEntry, regex: &Regex) -> bool {
+    regex.is_match(entry.file_name().to_str().unwrap()) 
 }
 
 fn should_set_color_arg(cmd: &Vec<String>) -> bool {

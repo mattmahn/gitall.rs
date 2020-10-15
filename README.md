@@ -72,11 +72,11 @@ OPTIONS:
         --color <WHEN>          Controls when to use color [default: auto]  [possible values: always, true, auto, never, false]
     -D, --directory <DIR>       The directory to start searching under [default: .]
     -d, --max-depth <LEVELS>    Descend at most LEVELS of directories below DIR
+    -r, --regex <regex>         Filters command to repo(s) matching provided Regex [default: .*]
 
 ARGS:
     <COMMAND>...    A single git command to run in each repo
 ```
-
 
 ## Installation
 
