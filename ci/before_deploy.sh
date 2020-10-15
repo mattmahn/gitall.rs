@@ -37,11 +37,13 @@ mk_tarball() {
   # copy shell completion files
   cp "$cargo_out"/gitall.{bash,elv,fish} "$cargo_out"/_gitall{,.ps1} "$staging/complete/"
 
+  pushd "$tmpdir"
   if [[ "$TRAVIS_OS_NAME" = "windows" ]]; then
-    7z a -r "$out_dir/$name.zip" "$staging"
+    7z a -r "$out_dir/$name.zip" "$name"
   else
-    tar czf "$out_dir/$name.tar.gz" "$staging"
+    tar czf "$out_dir/$name.tar.gz" "$name"
   fi
+  popd
   rm -rf "$tmpdir"
 }
 
