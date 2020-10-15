@@ -1,6 +1,6 @@
 [package]
 name = "gitall"
-version = "0.2.2"
+version = "0.3.0"
 authors = ["Matthew Mahnke <mmahnke18@gmail.com>"]
 edition = "2018"
 description = "Executes git(1) commands in repos below a parent directory"

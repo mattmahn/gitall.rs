@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 
+## [0.3.0] - 2020-10-15
+### Added
+- [#5]: add `-r`/`--regex` option to only work on Git directories matching the given
+  regular expression
+
+[#5]: https://github.com/mattmahn/gitall.rs/issues/5
+
+
 ## [0.2.2] - 2019-04-05
 No changes except to fix my deploy script.  This is same code as v0.2.1.
 
@@ -53,7 +61,8 @@ No changes except to fix my deploy script.  This is same code as v0.2.1.
 - `-D`/`--directory` option to set the search directory to something other than the current working directory
 
 
-[Unreleased]: https://github.com/mattmahn/gitall.rs/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/mattmahn/gitall.rs/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/mattmahn/gitall.rs/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/mattmahn/gitall.rs/compare/v0.2.1...v0.2.2
 [0.2.1]: https://github.com/mattmahn/gitall.rs/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/mattmahn/gitall.rs/compare/v0.1.1...v0.2.0
