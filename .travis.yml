@@ -1,6 +1,6 @@
 ---
 language: rust
-
+verbose: true
 env:
   global:
     - RUST_BACKTRACE: full
