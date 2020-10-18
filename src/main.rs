@@ -53,7 +53,11 @@ fn main() {
     loop {
         let entry = match it.next() {
             None => break,
-            Some(Err(err)) => panic!("ERROR: {}", err),
+            Some(Err(err)) => {
+                eprintln!("skipping directory due to error: {}", err);
+                it.skip_current_dir();
+                continue;
+            },
             Some(Ok(entry)) => entry,
         };
         if is_git_dir(&entry) { // we've found a Git repo root
