@@ -45,8 +45,9 @@ fn main() {
         wd = wd.max_depth(usize::from_str_radix(max_depth, 10).expect("max-depth option could not be parsed as a base-10 number"));
     }
 
-    let regex_str = matches.value_of("regex").unwrap();
-    let regex = Regex::new(regex_str).unwrap();
+    let regex_str = matches.value_of("regex").unwrap();  // default is provided to clap; can safely unwrap
+    let regex = Regex::new(regex_str).expect("regex option is not a valid regular expression (see https://docs.rs/regex/1/regex/#syntax for syntax)");
+    let regex_full_path = matches.is_present("full_path");
 
     // walk directory tree
     let mut it = wd.into_iter();
@@ -64,7 +65,7 @@ fn main() {
             // stop searching below this directory since we've already
             // found a Git repo root
             it.skip_current_dir();
-            if is_matching_dir(&entry, &regex) { // Only run commands for filtered repo(s)
+            if is_matching_dir(&entry, &regex, regex_full_path) { // Only run commands for filtered repo(s)
                 let tx = tx.clone();
                 let args = git_command.clone();
                 let color_arg = git_color_arg.clone();
@@ -110,8 +111,14 @@ fn is_git_dir(entry: &DirEntry) -> bool {
         && entry.path().join(".git").is_dir()
 }
 
-fn is_matching_dir(entry: &DirEntry, regex: &Regex) -> bool {
-    regex.is_match(entry.file_name().to_str().unwrap()) 
+fn is_matching_dir(entry: &DirEntry, regex: &Regex, full_path: bool) -> bool {
+    let canonical_path = entry.path().canonicalize().expect("failed to canonicalize the directory path");
+    let asdf: &str = if full_path {
+        canonical_path.to_str().unwrap()
+    } else {
+        entry.file_name().to_str().unwrap()
+    };
+    regex.is_match(asdf)
 }
 
 fn should_set_color_arg(cmd: &Vec<String>) -> bool {
