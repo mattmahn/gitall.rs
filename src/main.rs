@@ -44,28 +44,24 @@ fn main() {
     let git_command: Arc<Vec<String>> = Arc::new(git_command_args.map(String::from).collect());
     let git_color_arg: Arc<String> = Arc::new(format!("--color={}", cli::get_color_mode(&matches)));
 
-    let pool = rayon::ThreadPoolBuilder::new().build().unwrap();
-    let (tx, rx) = channel::<GitResult>();
-
     // configure directory tree walker
     let parent_dir = matches.value_of_os("dir").unwrap_or(OsStr::new("."));
     let mut g = Giterator::default()
         .root(parent_dir)
         .follow_links(matches.is_present("follow_links"));
-
     if let Some(max_depth) = matches.value_of("max_depth") {
         g = g.max_depth(
             usize::from_str_radix(max_depth, 10)
                 .expect("max-depth option could not be parsed as a base-10 number"),
         );
     }
-
     let regex_str = matches.value_of("regex").unwrap(); // default is provided to clap; can safely unwrap
     let regex = Regex::new(regex_str).expect("regex option is not a valid regular expression (see https://docs.rs/regex/1/regex/#syntax for syntax)");
     g = g.regex(regex);
+    g = g.match_full_path(matches.is_present("full_path"));
 
-    let regex_full_path = matches.is_present("full_path");
-    g = g.match_full_path(regex_full_path);
+    let pool = rayon::ThreadPoolBuilder::new().build().unwrap();
+    let (tx, rx) = channel::<GitResult>();
 
     // walk directory tree
     for entry in g {
