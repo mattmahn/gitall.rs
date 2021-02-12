@@ -1,4 +1,6 @@
-use clap::{App, Arg, ArgMatches, crate_authors, crate_description, crate_version, value_t_or_exit};
+use clap::{
+    crate_authors, crate_description, crate_version, value_t_or_exit, App, Arg, ArgMatches,
+};
 
 use std::fmt;
 use std::str::FromStr;
@@ -10,10 +12,10 @@ pub enum ColorMode {
 }
 
 pub struct ColorModeError {
-    kind: ColorModeErrorKind
+    kind: ColorModeErrorKind,
 }
 enum ColorModeErrorKind {
-    NoMatch
+    NoMatch,
 }
 
 impl ColorMode {
@@ -26,8 +28,8 @@ impl fmt::Display for ColorMode {
     fn fmt(&self, f: &mut fmt::Formatter) -> std::fmt::Result {
         let text = match self {
             ColorMode::Always => "always",
-            ColorMode::Auto   => "auto",
-            ColorMode::Never  => "never",
+            ColorMode::Auto => "auto",
+            ColorMode::Never => "never",
         };
         write!(f, "{}", text)
     }
@@ -44,7 +46,9 @@ impl FromStr for ColorMode {
         } else if s.eq_ignore_ascii_case("never") || s.eq_ignore_ascii_case("false") {
             Ok(ColorMode::Never)
         } else {
-            Err(ColorModeError{kind: ColorModeErrorKind::NoMatch})
+            Err(ColorModeError {
+                kind: ColorModeErrorKind::NoMatch,
+            })
         }
     }
 }

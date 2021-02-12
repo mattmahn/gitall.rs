@@ -10,7 +10,7 @@ fn main() {
         Some(outdir) => outdir,
         None => {
             panic!("OUT_DIR environment variable not defined");
-        },
+        }
     };
     fs::create_dir_all(&outdir).unwrap();
 
@@ -26,7 +26,7 @@ fn main() {
         Shell::Fish,
         Shell::Zsh,
         Shell::PowerShell,
-        Shell::Elvish
+        Shell::Elvish,
     ];
     for &variant in variants {
         app.gen_completions("gitall", variant, outdir.clone());
