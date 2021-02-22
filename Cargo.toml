@@ -1,18 +1,15 @@
 [package]
 name = "gitall"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["Matthew Mahnke <mmahnke18@gmail.com>"]
 edition = "2018"
 description = "Executes git(1) commands in repos below a parent directory"
-documentation = "https://github.com/mattmahn/gitall.rs"
+documentation = "https://docs.rs/gitall"
 repository = "https://github.com/mattmahn/gitall.rs"
 readme = "README.md"
 license = "Unlicense OR MIT"
-categories = ["command-line-utilities"]
+categories = ["command-line-utilities", "development-tools"]
 build = "build.rs"
-
-[badges]
-travis-ci = { repository = "mattmahn/gitall.rs", branch = "master" }
 
 [build-dependencies]
 clap = "~2.33.0"

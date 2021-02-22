@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 
+## [0.5.0] - 2021-02-22
+### Added
+- crate/library entrypoint so `gitalll` can now be used as a library in other projects
+
+
 ## [0.4.0] - 2020-10-18
 ### Added
 - [#5]: add `--full-path` flag to match `--regex` option against each directory's full & canonicalized path
@@ -71,7 +76,8 @@ No changes except to fix my deploy script.  This is same code as v0.2.1.
 - `-D`/`--directory` option to set the search directory to something other than the current working directory
 
 
-[Unreleased]: https://github.com/mattmahn/gitall.rs/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/mattmahn/gitall.rs/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/mattmahn/gitall.rs/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/mattmahn/gitall.rs/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mattmahn/gitall.rs/compare/v0.2.2...v0.3.0
 [0.2.2]: https://github.com/mattmahn/gitall.rs/compare/v0.2.1...v0.2.2

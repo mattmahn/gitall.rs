@@ -172,10 +172,10 @@ fn is_matching_dir(entry: &DirEntry, regex: &Regex, full_path: bool) -> bool {
         .path()
         .canonicalize()
         .expect("failed to canonicalize the directory path");
-    let asdf: &str = if full_path {
+    let pathname: &str = if full_path {
         canonical_path.to_str().unwrap()
     } else {
         entry.file_name().to_str().unwrap()
     };
-    regex.is_match(asdf)
+    regex.is_match(pathname)
 }
