@@ -2,6 +2,7 @@ use clap::{
     crate_authors, crate_description, crate_version, value_t_or_exit, App, Arg, ArgMatches,
 };
 
+use std::ffi::OsStr;
 use std::fmt;
 use std::str::FromStr;
 
@@ -95,6 +96,13 @@ pub fn build_cli() -> App<'static, 'static> {
             .takes_value(true)
             .value_name("REGEX")
             .default_value(".*"))
+        .arg(Arg::with_name("executable")
+            .short("X")
+            .long("executable")
+            .help("The program to run in each repo")
+            .takes_value(true)
+            .value_name("PROGRAM")
+            .default_value_os(OsStr::new("git")))
         .arg(Arg::with_name("cmd")
              .help("A single git command to run in each repo")
              .index(1)

@@ -59,6 +59,7 @@ fn main() {
     let regex = Regex::new(regex_str).expect("regex option is not a valid regular expression (see https://docs.rs/regex/1/regex/#syntax for syntax)");
     g = g.regex(regex);
     g = g.match_full_path(matches.is_present("full_path"));
+    let program = matches.value_of_os("executable").unwrap().to_owned(); // default is provided to clap; can safely unwrap
 
     let pool = rayon::ThreadPoolBuilder::new().build().unwrap();
     let (tx, rx) = channel::<GitResult>();
@@ -69,14 +70,15 @@ fn main() {
         let tx = tx.clone();
         let args = git_command.clone();
         let color_arg = git_color_arg.clone();
+        let program = program.clone();
 
         pool.spawn(move || {
-            let mut command = Command::new("git");
+            let mut command = Command::new(&program);
             command.current_dir(entry.path()).args(args.as_ref());
-            if should_set_color_arg(args.as_ref()) {
+            if program == "git" && should_set_git_color_arg(args.as_ref()) {
                 command.arg(color_arg.as_ref());
             }
-            let output = command.output().expect("failed to execute git command");
+            let output = command.output().expect("failed to execute command");
 
             tx.send(GitResult {
                 directory_name: entry.into_path(),
@@ -102,6 +104,6 @@ fn main() {
     }
 }
 
-fn should_set_color_arg(cmd: &Vec<String>) -> bool {
+fn should_set_git_color_arg(cmd: &Vec<String>) -> bool {
     cmd.iter().any(|term| COMMANDS.contains(&term.as_str()))
 }
