@@ -65,19 +65,39 @@ USAGE:
     gitall [FLAGS] [OPTIONS] <COMMAND>...
 
 FLAGS:
-    -L, --follow     Follow symbolic links
-        --full-path  Match REGEX against the full directory path
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+    -L, --follow
+            When specified, symbolic links will be followed when navigating the directory tree.
+
+        --full-path
+            By default, REGEX matches against only the directory name. Using this flag, REGEX matches against the full
+            canonical path.
+    -h, --help
+            Prints help information
+
+    -V, --version
+            Prints version information
+
 
 OPTIONS:
-        --color <WHEN>          Controls when to use color [default: auto]  [possible values: always, true, auto, never, false]
-    -D, --directory <DIR>       The directory to start searching under [default: .]
-    -d, --max-depth <LEVELS>    Descend at most LEVELS of directories below DIR
-    -r, --regex <REGEX>         Filters command to repo(s) matching provided Regex [default: .*]
+        --color <WHEN>
+            Controls when to use color [default: auto]  [possible values: always, true, auto, never, false]
+
+    -D, --directory <DIR>
+            The directory to start searching under [default: .]
+
+    -X, --executable <PROGRAM>
+            The program to run in each repo [default: git]
+
+    -d, --max-depth <LEVELS>
+            Descend at most LEVELS of directories below DIR
+
+    -r, --regex <REGEX>
+            Filters command to repo(s) matching provided regular expression [default: .*]
+
 
 ARGS:
-    <COMMAND>...    A single git command to run in each repo
+    <COMMAND>...
+            A single git command to run in each repo
 ```
 
 ## Installation
