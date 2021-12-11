@@ -1,0 +1,114 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+**'
+
+permissions:
+  contents: write
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+
+  build_release:
+    needs:
+      - create_release
+    env:
+      TARGET_DIR: ./target
+    ### begin copy pasta ↓
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        build:
+          - linux
+          - linux-musl
+          - linux-aarch64
+          - macos
+          - win-gnu
+          - win-msvc
+
+        include:
+          - build: linux
+            os: ubuntu-latest
+            rust: stable
+            cross: false
+            target: x86_64-unknown-linux-gnu
+          - build: linux-musl
+            os: ubuntu-latest
+            rust: stable
+            cross: true
+            target: x86_64-unknown-linux-musl
+          - build: linux-aarch64
+            os: ubuntu-latest
+            rust: stable
+            cross: true
+            target: aarch64-unknown-linux-gnu
+          - build: macos
+            os: macos-latest
+            rust: stable
+            cross: false
+            target: x86_64-apple-darwin
+          - build: win-gnu
+            os: ubuntu-latest
+            rust: stable
+            cross: true
+            target: x86_64-pc-windows-gnu
+          - build: win-msvc
+            os: windows-latest
+            rust: stable
+            cross: false
+            target: x86_64-pc-windows-msvc
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: cargo build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          use-cross: ${{ matrix.cross }}
+          args: --target ${{ matrix.target }} --verbose --release
+
+    ### end copy pasta, but with `--release` ↑
+
+      - name: package release
+        shell: bash  # make sure we're in Bash, even in Windows
+        run: |
+          cargo_out="$(ci/cargo_out_dir ${{ env.TARGET_DIR }})"
+          name="gitall-${{ github.ref_name }}-${{ matrix.target }}"
+          staging="${name}"
+          mkdir -p "${staging}/complete"
+
+          cp CHANGELOG.md COPYING LICENSE-MIT README.md UNLICENSE "$staging/"
+          cp "${cargo_out}"/gitall.{bash,elv,fish} "${cargo_out}"/_gitall{,.ps1} "$staging/complete/"
+
+          if [[ "${{ matrix.target }}" =~ .*pc-windows.* ]]; then
+            cp "${{ env.TARGET_DIR }}/${{ matrix.target }}/release/gitall.exe" "$staging/"
+            asset="${name}.zip"
+            7z a -r "$asset" "${staging}"
+            echo "ASSET=$asset" >> $GITHUB_ENV
+          else
+            cp "${{ env.TARGET_DIR }}/${{ matrix.target }}/release/gitall" "$staging/"
+            asset="${name}.tar.gz"
+            tar czf "$asset" "${staging}"
+            echo "ASSET=$asset" >> $GITHUB_ENV
+          fi
+
+      - name: Upload artifacts
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ env.ASSET }}
