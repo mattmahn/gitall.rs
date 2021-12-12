@@ -2,7 +2,7 @@
 
 gitall recursively finds all repositories below a directory and runs the given [Git][] command in each repository in parallel.
 
-[![Build Status](https://travis-ci.org/mattmahn/gitall.rs.svg?branch=master)](https://travis-ci.org/mattmahn/gitall.rs)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/mattmahn/gitall.rs/Continuous%20Integration)](https://github.com/mattmahn/gitall.rs/actions/workflows/ci.yml)
 [![Crate Documentation](https://docs.rs/gitall/badge.svg)](https://docs.rs/gitall)
 
 
@@ -93,6 +93,9 @@ OPTIONS:
 
     -r, --regex <REGEX>
             Filters command to repo(s) matching provided regular expression [default: .*]
+
+    -j, --threads <NUM>
+            The maximum number of commands to run in parallel
 
 
 ARGS:
