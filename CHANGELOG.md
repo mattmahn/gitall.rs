@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## [Unreleased]
 
 
+## [0.6.0] - 2021-12-12
+### Added
+- [#7]: add `-X` option to run a program other than `git`
+- [#8]: add `-j` option to limit the maximum number of repos to process in parallel
+
+### Changed
+- replaced Travis CI with GitHub Actions
+
+[#7]: https://github.com/mattmahn/gitall.rs/issues/7
+[#8]: https://github.com/mattmahn/gitall.rs/issues/8
+
+
 ## [0.5.0] - 2021-02-22
 ### Added
 - crate/library entrypoint so `gitalll` can now be used as a library in other projects
@@ -76,7 +88,8 @@ No changes except to fix my deploy script.  This is same code as v0.2.1.
 - `-D`/`--directory` option to set the search directory to something other than the current working directory
 
 
-[Unreleased]: https://github.com/mattmahn/gitall.rs/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/mattmahn/gitall.rs/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/mattmahn/gitall.rs/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/mattmahn/gitall.rs/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/mattmahn/gitall.rs/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/mattmahn/gitall.rs/compare/v0.2.2...v0.3.0
