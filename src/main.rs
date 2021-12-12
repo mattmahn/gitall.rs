@@ -2,6 +2,7 @@ use atty;
 use clap::ArgMatches;
 use rayon;
 use regex::Regex;
+use std::str::FromStr;
 use termcolor::StandardStream;
 
 use std::default::Default;
@@ -61,7 +62,13 @@ fn main() {
     g = g.match_full_path(matches.is_present("full_path"));
     let program = matches.value_of_os("executable").unwrap().to_owned(); // default is provided to clap; can safely unwrap
 
-    let pool = rayon::ThreadPoolBuilder::new().build().unwrap();
+    let threads = matches.value_of("workers").map_or(num_cpus::get(), |f| {
+        usize::from_str(f).expect("threads option could not be parsed as a base-10 number")
+    });
+    let pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(threads)
+        .build()
+        .unwrap();
     let (tx, rx) = channel::<GitResult>();
 
     // walk directory tree
