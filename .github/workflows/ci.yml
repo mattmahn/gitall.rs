@@ -25,71 +25,56 @@ jobs:
           - build: linux
             os: ubuntu-latest
             rust: stable
+            cross: false
+            target: x86_64-unknown-linux-gnu
           - build: linux-musl
             os: ubuntu-latest
             rust: stable
+            cross: true
             target: x86_64-unknown-linux-musl
           - build: linux-aarch64
             os: ubuntu-latest
             rust: stable
+            cross: true
             target: aarch64-unknown-linux-gnu
           - build: macos
             os: macos-latest
             rust: stable
+            cross: false
+            target: x86_64-apple-darwin
           - build: win-gnu
             os: ubuntu-latest
             rust: stable
+            cross: true
             target: x86_64-pc-windows-gnu
           - build: win-msvc
             os: windows-latest
             rust: stable
+            cross: false
+            target: x86_64-pc-windows-msvc
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install Rust (default)
-        if: matrix.target == ''
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ matrix.rust }}
-          override: true
-
-      - name: Install Rust (not default)
-        if: matrix.target != ''
+      - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.rust }}
           target: ${{ matrix.target }}
           override: true
 
-      - name: cargo build (default)
-        if: matrix.target == ''
+      - name: cargo build
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --verbose
-
-      - name: cargo build (not default)
-        if: matrix.target != ''
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          use-cross: true
+          use-cross: ${{ matrix.cross }}
           args: --target ${{ matrix.target }} --verbose
 
-      - name: cargo test (default)
-        if: matrix.target == ''
+      - name: cargo test
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --verbose
-
-      - name: cargo test (not default)
-        if: matrix.target != ''
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          use-cross: true
+          use-cross: ${{ matrix.cross }}
           args: --target ${{ matrix.target }} --verbose
 
   rustfmt:
