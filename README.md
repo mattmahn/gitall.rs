@@ -14,6 +14,7 @@ For example, to list all remote and local repository branches you need to run `g
 
 **Pro Tip:** if you add a file called `git-foo` to your `PATH` (either via copying or symlinking), you can call that program _through_ `git` using `git foo`; no additional aliases or setup needed.
 So, after running `ln -s /usr/bin/gitall /usr/bin/git-all`, you can use gitall via `git all` exactly the same as if you used `gitall`.
+Similarly, any command aliases that you configure in your `gitconfig` file are recognized and can be run by `gitall`.
 
 
 ### Examples
