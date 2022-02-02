@@ -1,28 +1,13 @@
-use clap::{
-    crate_authors, crate_description, crate_version, value_t_or_exit, App, Arg, ArgMatches,
-};
+use clap::{ArgEnum, Parser};
 
-use std::ffi::OsStr;
 use std::fmt;
-use std::str::FromStr;
+use std::path::PathBuf;
 
+#[derive(Clone, Copy, ArgEnum)]
 pub enum ColorMode {
     Always,
     Auto,
     Never,
-}
-
-pub struct ColorModeError {
-    kind: ColorModeErrorKind,
-}
-enum ColorModeErrorKind {
-    NoMatch,
-}
-
-impl ColorMode {
-    pub fn variants() -> Vec<&'static str> {
-        vec!["always", "true", "auto", "never", "false"]
-    }
 }
 
 impl fmt::Display for ColorMode {
@@ -36,88 +21,47 @@ impl fmt::Display for ColorMode {
     }
 }
 
-impl FromStr for ColorMode {
-    type Err = ColorModeError;
+#[derive(Parser)]
+#[clap(author, about, version)]
+pub struct Cli {
+    /// Follow symbolic links
+    ///
+    /// When specified, symbolic links will be followed when navigating the directory tree.
+    #[clap(short = 'L', long = "follow")]
+    pub follow_links: bool,
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.eq_ignore_ascii_case("always") {
-            Ok(ColorMode::Always)
-        } else if s.eq_ignore_ascii_case("auto") || s.eq_ignore_ascii_case("true") {
-            Ok(ColorMode::Auto)
-        } else if s.eq_ignore_ascii_case("never") || s.eq_ignore_ascii_case("false") {
-            Ok(ColorMode::Never)
-        } else {
-            Err(ColorModeError {
-                kind: ColorModeErrorKind::NoMatch,
-            })
-        }
-    }
-}
+    /// Controls when to use color
+    #[clap(long, arg_enum, ignore_case = true, value_name = "WHEN", default_value_t = ColorMode::Auto)]
+    pub color: ColorMode,
 
-pub fn build_cli() -> App<'static, 'static> {
-    App::new("gitall")
-        .version(crate_version!())
-        .author(crate_authors!(", "))
-        .about(crate_description!())
-        .arg(Arg::with_name("follow_links")
-             .short("L")
-             .long("follow")
-             .help("Follow symbolic links")
-             .long_help("When specified, symbolic links will be followed when navigating the directory tree."))
-        .arg(Arg::with_name("color_mode")
-             .long("color")
-             .takes_value(true)
-             .possible_values(&ColorMode::variants())
-             .case_insensitive(true)
-             .value_name("WHEN")
-             .default_value("auto")
-             .help("Controls when to use color"))
-        .arg(Arg::with_name("dir")
-             .short("D")
-             .long("directory")
-             .help("The directory to start searching under")
-             .takes_value(true)
-             .value_name("DIR")
-             .default_value("."))
-        .arg(Arg::with_name("max_depth")
-             .short("d")
-             .long("max-depth")
-             .help("Descend at most LEVELS of directories below DIR")
-             .takes_value(true)
-             .value_name("LEVELS"))
-        .arg(Arg::with_name("full_path")
-            .long("full-path")
-            .help("Match REGEX against the full directory path")
-            .long_help("By default, REGEX matches against only the directory name. Using this flag, REGEX matches against the full canonical path."))
-        .arg(Arg::with_name("regex")
-            .short("r")
-            .long("regex")
-            .help("Filters command to repo(s) matching provided regular expression")
-            .takes_value(true)
-            .value_name("REGEX")
-            .default_value(".*"))
-        .arg(Arg::with_name("workers")
-            .short("j")
-            .long("threads")
-            .help("The maximum number of commands to run in parallel")
-            .takes_value(true)
-            .value_name("NUM"))
-        .arg(Arg::with_name("executable")
-            .short("X")
-            .long("executable")
-            .help("The program to run in each repo")
-            .takes_value(true)
-            .value_name("PROGRAM")
-            .default_value_os(OsStr::new("git")))
-        .arg(Arg::with_name("cmd")
-             .help("A single git command to run in each repo")
-             .index(1)
-             .required(true)
-             .empty_values(false)
-             .multiple(true)
-             .value_name("COMMAND"))
-}
+    /// The directory to start searching under
+    #[clap(short = 'D', long, value_name = "DIR", default_value = ".")]
+    pub directory: PathBuf,
 
-pub fn get_color_mode(matches: &ArgMatches) -> ColorMode {
-    value_t_or_exit!(matches, "color_mode", ColorMode)
+    /// Descend at most LEVELS directories below DIR
+    #[clap(short = 'd', long, value_name = "LEVELS")]
+    pub max_depth: Option<usize>,
+
+    /// Match REGEX against the full directory path
+    ///
+    /// By default, REGEX matches against only the directory name.
+    /// Using this flag, REGEX matches against the full canonical path.
+    #[clap(long)]
+    pub full_path: bool,
+
+    /// Filters command to repo(s) matching provided regular expression
+    #[clap(short, long, default_value = ".*")]
+    pub regex: String,
+
+    /// Maximum number of commands to run in parallel
+    #[clap(short = 'j', long, value_name = "NUM")]
+    pub threads: Option<usize>,
+
+    /// The program to run in each repo
+    #[clap(short = 'X', long, value_name = "PROGRAM", default_value = "git")]
+    pub executable: String,
+
+    /// A single git command to run in each repo
+    #[clap(required = true, forbid_empty_values = true)]
+    pub command: Vec<String>,
 }

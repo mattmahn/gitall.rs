@@ -1,18 +1,17 @@
 use atty;
-use clap::ArgMatches;
+use clap::Parser;
 use rayon;
 use regex::Regex;
-use std::str::FromStr;
 use termcolor::StandardStream;
 
 use std::default::Default;
-use std::ffi::OsStr;
 use std::path::PathBuf;
 use std::process::{Command, Output};
 use std::sync::mpsc::channel;
 use std::sync::Arc;
 
 mod cli;
+use cli::Cli;
 mod lib;
 use lib::Giterator;
 mod output;
@@ -39,32 +38,23 @@ pub struct GitResult {
 }
 
 fn main() {
-    let matches: ArgMatches<'static> = cli::build_cli().get_matches();
+    let cli = Cli::parse();
 
-    let git_command_args = matches.values_of("cmd").unwrap();
-    let git_command: Arc<Vec<String>> = Arc::new(git_command_args.map(String::from).collect());
-    let git_color_arg: Arc<String> = Arc::new(format!("--color={}", cli::get_color_mode(&matches)));
+    let git_command = Arc::new(cli.command);
+    let git_color_arg: Arc<String> = Arc::new(format!("--color={}", cli.color));
 
     // configure directory tree walker
-    let parent_dir = matches.value_of_os("dir").unwrap_or(OsStr::new("."));
     let mut g = Giterator::default()
-        .root(parent_dir)
-        .follow_links(matches.is_present("follow_links"));
-    if let Some(max_depth) = matches.value_of("max_depth") {
-        g = g.max_depth(
-            usize::from_str_radix(max_depth, 10)
-                .expect("max-depth option could not be parsed as a base-10 number"),
-        );
+        .root(&cli.directory)
+        .follow_links(cli.follow_links);
+    if let Some(max_depth) = cli.max_depth {
+        g = g.max_depth(max_depth);
     }
-    let regex_str = matches.value_of("regex").unwrap(); // default is provided to clap; can safely unwrap
-    let regex = Regex::new(regex_str).expect("regex option is not a valid regular expression (see https://docs.rs/regex/1/regex/#syntax for syntax)");
+    let regex = Regex::new(&cli.regex).expect("regex option is not a valid regular expression (see https://docs.rs/regex/1/regex/#syntax for syntax)");
     g = g.regex(regex);
-    g = g.match_full_path(matches.is_present("full_path"));
-    let program = matches.value_of_os("executable").unwrap().to_owned(); // default is provided to clap; can safely unwrap
+    g = g.match_full_path(cli.full_path);
 
-    let threads = matches.value_of("workers").map_or(num_cpus::get(), |f| {
-        usize::from_str(f).expect("threads option could not be parsed as a base-10 number")
-    });
+    let threads = cli.threads.unwrap_or_else(num_cpus::get);
     let pool = rayon::ThreadPoolBuilder::new()
         .num_threads(threads)
         .build()
@@ -77,7 +67,7 @@ fn main() {
         let tx = tx.clone();
         let args = git_command.clone();
         let color_arg = git_color_arg.clone();
-        let program = program.clone();
+        let program = cli.executable.clone();
 
         pool.spawn(move || {
             let mut command = Command::new(&program);
@@ -98,9 +88,8 @@ fn main() {
     // manually drop tx so the receiver ends
     drop(tx);
 
-    let color_mode = cli::get_color_mode(&matches);
-    let stdout = StandardStream::stdout(output::color_choice(&color_mode, &atty::Stream::Stdout));
-    let stderr = StandardStream::stderr(output::color_choice(&color_mode, &atty::Stream::Stderr));
+    let stdout = StandardStream::stdout(output::color_choice(&cli.color, &atty::Stream::Stdout));
+    let stderr = StandardStream::stderr(output::color_choice(&cli.color, &atty::Stream::Stderr));
     {
         let mut stdout_l = stdout.lock();
         let mut stderr_l = stderr.lock();
