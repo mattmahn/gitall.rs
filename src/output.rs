@@ -1,4 +1,4 @@
-use atty;
+use is_terminal::IsTerminal;
 use termcolor::{Color, ColorChoice, ColorSpec, WriteColor};
 
 use std::io::{self, Write};
@@ -6,8 +6,8 @@ use std::io::{self, Write};
 use crate::cli::ColorMode;
 use crate::GitResult;
 
-pub fn color_choice(color_mode: &ColorMode, stream: &atty::Stream) -> ColorChoice {
-    match (color_mode, atty::is(*stream)) {
+pub fn color_choice(color_mode: &ColorMode, stream: &dyn IsTerminal) -> ColorChoice {
+    match (color_mode, stream.is_terminal()) {
         (ColorMode::Always, _) => ColorChoice::Always,
         (ColorMode::Auto, true) => ColorChoice::Auto,
         (ColorMode::Auto, false) => ColorChoice::Never,

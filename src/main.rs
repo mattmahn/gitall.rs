@@ -1,10 +1,10 @@
-use atty;
 use clap::Parser;
 use rayon;
 use regex::Regex;
 use termcolor::StandardStream;
 
 use std::default::Default;
+use std::io::{stderr, stdout};
 use std::path::PathBuf;
 use std::process::{Command, Output};
 use std::sync::mpsc::channel;
@@ -88,8 +88,8 @@ fn main() {
     // manually drop tx so the receiver ends
     drop(tx);
 
-    let stdout = StandardStream::stdout(output::color_choice(&cli.color, &atty::Stream::Stdout));
-    let stderr = StandardStream::stderr(output::color_choice(&cli.color, &atty::Stream::Stderr));
+    let stdout = StandardStream::stdout(output::color_choice(&cli.color, &stdout()));
+    let stderr = StandardStream::stderr(output::color_choice(&cli.color, &stderr()));
     {
         let mut stdout_l = stdout.lock();
         let mut stderr_l = stderr.lock();
