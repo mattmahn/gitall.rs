@@ -1,9 +1,10 @@
-use clap::{ArgEnum, Parser};
+use clap::builder::NonEmptyStringValueParser;
+use clap::{Parser, ValueEnum};
 
 use std::fmt;
 use std::path::PathBuf;
 
-#[derive(Clone, Copy, ArgEnum)]
+#[derive(Clone, Copy, ValueEnum)]
 pub enum ColorMode {
     Always,
     Auto,
@@ -31,7 +32,7 @@ pub struct Cli {
     pub follow_links: bool,
 
     /// Controls when to use color
-    #[clap(long, arg_enum, ignore_case = true, value_name = "WHEN", default_value_t = ColorMode::Auto)]
+    #[clap(long, value_enum, ignore_case = true, value_name = "WHEN", default_value_t = ColorMode::Auto)]
     pub color: ColorMode,
 
     /// The directory to start searching under
@@ -62,6 +63,6 @@ pub struct Cli {
     pub executable: String,
 
     /// A single git command to run in each repo
-    #[clap(required = true, forbid_empty_values = true)]
+    #[clap(required = true, value_parser = NonEmptyStringValueParser::new())]
     pub command: Vec<String>,
 }

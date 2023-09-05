@@ -12,14 +12,15 @@ categories = ["command-line-utilities", "development-tools"]
 build = "build.rs"
 
 [build-dependencies]
-clap = { version = "3.0", features = ["derive"] }
-clap_complete = "3.0"
+clap = { version = "4", features = ["derive"] }
+clap_complete = "4"
 
 [dependencies]
-atty = "~0.2.11"
-clap = { version = "3.0", features = ["derive"] }
+clap = { version = "4", features = ["derive"] }
+clap_complete = "4"
+is-terminal = "0.4.9"
 num_cpus = "1"
-rayon = "~1.4.0"
+rayon = "1.7"
 regex = "1"
 termcolor = "~1.1.0"
 walkdir = "2"

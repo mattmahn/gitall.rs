@@ -1,4 +1,4 @@
-use clap::{ArgEnum, IntoApp};
+use clap::{CommandFactory, ValueEnum};
 use clap_complete::Shell;
 
 use std::{env, fs, path};
@@ -21,7 +21,7 @@ fn main() {
     }
 
     // use clap to build completion files
-    let mut cli = cli::Cli::into_app();
+    let mut cli = cli::Cli::command();
     for &variant in Shell::value_variants() {
         clap_complete::generate_to(variant, &mut cli, "gitall", outdir.clone()).unwrap();
     }
