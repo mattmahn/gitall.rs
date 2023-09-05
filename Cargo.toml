@@ -20,7 +20,7 @@ clap = { version = "4", features = ["derive"] }
 clap_complete = "4"
 is-terminal = "0.4.9"
 num_cpus = "1"
-rayon = "~1.4.0"
+rayon = "1.7"
 regex = "1"
 termcolor = "~1.1.0"
 walkdir = "2"
